@@ -22,7 +22,6 @@ def load_data(messages_filepath, categories_filepath):
     
     return df
 
-
 def clean_data(df):
     """
     Loads df and cleans
