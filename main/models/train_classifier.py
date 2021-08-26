@@ -1,10 +1,8 @@
-import sys
+import sys, re, warnings, nltk, pickle
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sqlalchemy import create_engine
-
-# For machine learning
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -14,14 +12,6 @@ from sklearn.multioutput import MultiOutputClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, make_scorer,classification_report
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
-
-import warnings
-
-warnings.simplefilter('ignore')
-
-# For nlp
-import re
-import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
@@ -31,7 +21,8 @@ nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
 from nltk.corpus import stopwords
-import pickle
+
+warnings.simplefilter('ignore')
 
 def load_data(database_filepath):
     """
@@ -52,21 +43,20 @@ def load_data(database_filepath):
     return X, Y, category_names
 
 def tokenize(text):
-    """Normalize, tokenize and lemmatize text string
+    """
+    Normalize, tokenize and lemmatize text string
     
     Input:
-    text: string- String containing message for processing
+    text: string containing message for processing
        
     Returns:
-    stemmed: list of strings- List containing normalized and lemmatize word tokens
+    stemmed: list containing normalized and lemmatize word tokens
     """
-    # Detect URLs
     url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
     detected_urls = re.findall(url_regex, text)
     for url in detected_urls:
         text = text.replace(url, 'urlplaceholder')
     
-    # Normalize and tokenize and remove punctuation
     tokens = nltk.word_tokenize(re.sub(r"[^a-zA-Z0-9]", " ", text.lower()))
     
     # Remove stopwords
@@ -84,7 +74,6 @@ def build_model():
         pipline: sklearn.model_selection.GridSearchCV. It contains a sklearn estimator.
     """
     
-    #https://medium.com/swlh/the-hyperparameter-cheat-sheet-770f1fed32ff
     pipeline_ada = Pipeline([
     ('vect', CountVectorizer(tokenizer=tokenize)),
     ('tfidf', TfidfTransformer()),
