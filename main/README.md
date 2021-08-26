@@ -1,6 +1,6 @@
-# Disaster Response Pipeline Project
+# Disaster Response Pipeline Project Developer Notes
 
-### Instructions:
+### Instructions for Processing and Training Model:
 1. Run the following commands in the project's root directory to set up your database and model.
 
     - To run ETL pipeline that cleans data and stores in database
