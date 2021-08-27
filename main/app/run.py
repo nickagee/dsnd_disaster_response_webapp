@@ -1,10 +1,7 @@
-import json
-import plotly
+import json, plotly
 import pandas as pd
-
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
-
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
@@ -40,31 +37,68 @@ def index():
     
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
+    gen_count = df.groupby('genre').count()['message']
+    gen_names = list(gen_count.index)
+    # extract data needed for visuals
+    gen_per = round(100*gen_count/gen_count.sum(),2)
+
+    # Top five categories count
+    top_category_count = df.iloc[:,4:].sum().sort_values(ascending=False)[1:11]
+    top_category_names = list(top_category_count.index)
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
+            "data": [
+              {
+                "type": "pie",
+                #"uid": "f4de1f",
+                "hole": 0.6,
+                "name": "Genre",
+                "pull": 0,
+                "domain": {
+                  "x": gen_per,
+                  "y": gen_names
+                },
+                "marker": {
+                  "colors": [
+                    "LightSeaGreen",
+                    "MediumPurple",
+                    "LightSkyBlue4"
+                   ]
+                },
+                "textinfo": "label+value",
+                "hoverinfo": "all",
+                "labels": gen_names,
+                "values": gen_count
+              }
+            ],
+            "layout": {
+              "title": "Distribution of Messages by Genre"
+            }
+        },
+         {
             'data': [
                 Bar(
-                    x=genre_names,
-                    y=genre_counts
+                    x=top_category_names,
+                    y=top_category_count,
+                    marker=dict(color="#17becf")
                 )
             ],
 
             'layout': {
-                'title': 'Distribution of Message Genres',
+                'title': 'Top Ten Categories',
                 'yaxis': {
                     'title': "Count"
                 },
                 'xaxis': {
-                    'title': "Genre"
+                    'title': "Categories"
                 }
             }
         }
     ]
+
     
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
