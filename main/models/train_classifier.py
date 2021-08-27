@@ -99,6 +99,12 @@ def evaluate_model(model, X_test, Y_test, category_names):
     print(classification_report(Y_test, Y_pred, target_names=category_names))
 
 def save_model(model, model_filepath):
+    """
+    Save model function
+    Input:
+        model: sklearn.model_selection.GridSearchCV.  It contains a sklearn estimator.
+        model_filepath: path and name for saved model pickle file.
+    """
     with open(model_filepath, 'wb') as file:
         pickle.dump(model, file)
 
