@@ -96,7 +96,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
     """
     Y_pred = model.predict(X_test)
     
-    print(classification_report(Y_test.iloc[:, 1:].values, np.array([x[1:] for x in Y_pred]), target_names = category_names))
+    print(classification_report(Y_test, Y_pred, target_names=category_names))
 
 def save_model(model, model_filepath):
     with open(model_filepath, 'wb') as file:
